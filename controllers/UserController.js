@@ -23,6 +23,8 @@ class UserController {
 
             let values = this.getValues();
 
+            if (!values) return false;//Caso não passe na validação dos campos ele já não tenta colocar a foto
+
             //Chamando Promise
             this.getPhoto().then(
                 (content) => {
@@ -88,10 +90,20 @@ class UserController {
     getValues(){
 
         let user = {};
+        let isValid = true;
 
         //console.log(typeof this.formEl.elements);
 
         [...this.formEl.elements].forEach(function (field, index){//Spread ... evita a repetição dos indices do array
+
+            //Implementando campos obrigatórios
+            if (['name', 'email', 'password'].indexOf(field.name) > -1 && !field.value){
+
+                //console.dir(field);
+                field.parentElement.classList.add('has-error');
+                isValid = false;
+
+            }
 
             if (field.name == 'gender'){
         
@@ -110,6 +122,11 @@ class UserController {
             }      
         });
     
+        //Antes de iniciar um novo formulário ele pergunta se está válido
+        if (!isValid) {
+            return false;
+        }
+
         //Uma boa prática, reduzir código
         return new User(
             user.name, 
@@ -141,6 +158,8 @@ class UserController {
 
         //console.log('adddLine', dataUser);
         let tr = document.createElement("tr");
+
+        tr.dataset.user = JSON.stringify(dataUser);
     
         tr.innerHTML = `
             <tr>
@@ -158,7 +177,32 @@ class UserController {
         `;
     
         this.tableEl.appendChild(tr);
+
+        this.updateCount();
     
+    }
+
+    //Atualizar quantidade de usuários
+    updateCount(){
+
+        let numberUsers = 0;
+        let numberAdmin = 0;
+
+        [...this.tableEl.children].forEach(tr => {
+
+            numberUsers++;
+
+            //console.log(JSON.parse(tr.dataset.user));
+            let user = JSON.parse(tr.dataset.user);
+
+            if (user._admin) numberAdmin++;
+
+        });
+
+        //atualizando os contadores na tela
+        document.querySelector('#number-users').innerHTML = numberUsers;
+        document.querySelector('#number-users-admin').innerHTML = numberAdmin;
+
     }
 
 }
