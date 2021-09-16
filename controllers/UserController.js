@@ -16,15 +16,73 @@ class UserController {
             //alert('Oi');
             event.preventDefault();//evita que o submit mude a página da web
 
-            /*let user = this.getValues();
+            let btn = this.formEl.querySelector('[type = submit]');//Seleciona o Botão Salvar
 
-            this.addLine(user);*/
+            //aqui vai desabilitar o botão quando estiver enviando o formulário
+            btn.disabled = true;
 
-            //Reduzindo código é a mesma coisa de cima
-            this.addLine(this.getValues());
+            let values = this.getValues();
+
+            //Chamando Promise
+            this.getPhoto().then(
+                (content) => {
+
+                    //Tratamento para a foto
+                    values.photo = content;
+
+                    this.addLine(values);
+
+                    this.formEl.reset();//Aqui vai limpar o formulário
+
+                    btn.disabled = false;//Aqui habilita novamente o botão salvar após enviado o formuário
+
+                },
+                function(e){
+                    console.error(e)
+                }
+            );
             
         });
 
+    }
+
+    //Método para pegar a foto
+    getPhoto(){
+
+        return new Promise((resolve, reject) => {//Caso funcione tudo bem ocorre o resolve e no contrário ocorre o reject
+
+            let fileReader = new FileReader();
+
+            let elements = [...this.formEl.elements].filter(item => {
+                if (item.name === 'photo') {
+                    return item;
+                }
+            });
+
+            //console.log(elements[0].files[0]);
+            let file = elements[0].files[0];
+
+            fileReader.onload = () => {
+
+                resolve(fileReader.result);
+
+            };
+
+            fileReader.onerror = (e) => {//Utiliza o e para aparecer o erro que ocorreu
+
+                reject(e);
+
+            };
+
+            //Tratando um bug caso não tenha sido enviado foto alguma
+            if (file) {//Se tiver foto
+                fileReader.readAsDataURL(file);
+            } else {//Caso não tenha foto
+                resolve('dist/img/boxed-bg.jpg');
+            }
+
+        });
+        
     }
 
     getValues(){
@@ -41,8 +99,14 @@ class UserController {
                     user[field.name] = field.value;
                 }
         
+            } else if (field.name == "admin") {//Resolver o problema do checkbox do admin
+
+                user[field.name] = field.checked;
+
             } else {
+                
                 user[field.name] = field.value;
+
             }      
         });
     
@@ -76,15 +140,14 @@ class UserController {
     addLine(dataUser){
 
         //console.log('adddLine', dataUser);
-        //var tr = document.createElement("tr");
+        let tr = document.createElement("tr");
     
-        //tr.innerHTML =
-        this.tableEl.innerHTML = `
+        tr.innerHTML = `
             <tr>
-                <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+                <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
                 <td>${dataUser.name}</td>
                 <td>${dataUser.email}</td>
-                <td>${dataUser.admin}</td>
+                <td>${(dataUser.admin) ? 'Sim' : 'Não'}</td>
                 <td>${dataUser.birth}</td>
                 <td>
                     <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
@@ -94,7 +157,7 @@ class UserController {
         
         `;
     
-        //document.getElementById("table-user").appendChild(tr);
+        this.tableEl.appendChild(tr);
     
     }
 
