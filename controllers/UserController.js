@@ -1,6 +1,6 @@
 class UserController {
 
-    constructor(formId, tableId ){
+    constructor(formId, tableId){
 
         this.formEl = document.getElementById(formId);
         this.tableEl = document.getElementById(tableId);
@@ -31,18 +31,19 @@ class UserController {
 
         let user = {};
 
-        [...this.formEl.elements].forEach(function(field, index){
+        //console.log(typeof this.formEl.elements);
+
+        [...this.formEl.elements].forEach(function (field, index){//Spread ... evita a repetição dos indices do array
 
             if (field.name == 'gender'){
         
-                if (field.checked) user[field.name] = field.value;
+                if (field.checked){
+                    user[field.name] = field.value;
+                }
         
             } else {
-        
                 user[field.name] = field.value;
-        
-            }
-        
+            }      
         });
     
         //Uma boa prática, reduzir código
