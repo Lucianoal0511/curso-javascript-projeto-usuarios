@@ -16,7 +16,7 @@ var admin = document.querySelector('#exampleInputAdmin');*/
 var fields = document.querySelectorAll('#form-user-create [name]');
 var user = {};
 
-fields.forEach(function(field, index){
+/*fields.forEach(function(field, index){
 
     if (field.name == 'gender'){
 
@@ -38,7 +38,7 @@ fields.forEach(function(field, index){
 
 });
 
-console.log(user);
+console.log(user);*/
 
 //colocando evento no botão
 /*document.querySelectorAll("button").forEach(function(){
@@ -48,7 +48,32 @@ console.log(user);
     });
 });*/
 
-document.getElementById('form-user-create').addEventListener('submit', function(){
+function addLine(dataUser){
+
+    //console.log('adddLine', dataUser);
+    //var tr = document.createElement("tr");
+
+    //tr.innerHTML =
+    document.getElementById("table-user").innerHTML = `
+        <tr>
+            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+            <td>${dataUser.name}</td>
+            <td>${dataUser.email}</td>
+            <td>${dataUser.admin}</td>
+            <td>${dataUser.birth}</td>
+            <td>
+                <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+            </td>
+        </tr>
+    
+    `;
+
+    //document.getElementById("table-user").appendChild(tr);
+
+}
+
+document.getElementById('form-user-create').addEventListener('submit', function(event){
    
     //alert('Oi');
     event.preventDefault();//evita que o submit mude a página da web
@@ -59,20 +84,29 @@ document.getElementById('form-user-create').addEventListener('submit', function(
     
             //Duas formas de escrever a mesma coisa
             //if (field.checked === true)
-            if (field.checked)
-    
-            //console.log("Sim", field)
-            user[field.name] = field.value;
+            if (field.checked) user[field.name] = field.value;
     
         } else {
     
-            //console.log("Não");
             user[field.name] = field.value;
     
         }
     
-        console.log(user);
+        //console.log(user);
     
     });
+
+    var objectUser = new User(
+        user.name, 
+        user.gender, 
+        user.birth, 
+        user.country, 
+        user.email, 
+        user.password, 
+        user.photo, 
+        user.admin
+    );
+
+    addLine(objectUser);
     
 });
