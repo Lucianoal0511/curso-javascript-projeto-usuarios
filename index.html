@@ -196,7 +196,7 @@
             <!-- ./col -->
           </div>
 
-          <div class="box box-success">
+          <div class="box box-success" id="box-user-create">
             <div class="box-header with-border">
               <h3 class="box-title">Novo Usuário</h3>
             </div>
@@ -497,13 +497,13 @@
             </form>
           </div>
 
-          <div class="box box-primary" style="display: none;">
+          <div class="box box-primary" id="box-user-update" style="display: none;">
             <div class="box-header with-border">
               <h3 class="box-title">Editar Usuário</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" id=""form-user-update>
+            <form role="form" id="form-user-update">
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputName">Nome</label>
@@ -782,6 +782,7 @@
                   <input type="password" class="form-control" id="exampleInputPassword" placeholder="Crie uma senha" name="password">
                 </div>
                 <div class="form-group">
+                  <img src="dist/img/boxed-bg.jpg" class="photo" style="max-height: 260px;" alt="Foto">
                   <label for="exampleInputFile">Foto</label>
                   <input type="file" id="exampleInputFile" name="photo">
                 </div>
@@ -794,7 +795,7 @@
               <!-- /.box-body -->          
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <button type="submit" class="btn btn-default">Cancelar</button>
+                <button type="button" class="btn btn-cancel btn-default">Cancelar</button>
               </div>
             </form>
           </div>
