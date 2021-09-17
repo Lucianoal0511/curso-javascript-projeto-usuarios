@@ -228,33 +228,10 @@ class UserController {
 
     }
 
-    //Método de carregar os dados que estão dentro do sessionStorage
-    getUsersStorage(){
-
-        let users = [];//Criando array
-        
-        //Para sessionStorage
-        /*if (sessionStorage.getItem('users')){//verifica se tem alguma coisa no array
-
-            users = JSON.parse(sessionStorage.getItem('users'));//Aqui vai sobreescrever o array
-
-        }*/
-
-        //Para localStorage
-        if (localStorage.getItem('users')){//verifica se tem alguma coisa no array
-
-            users = JSON.parse(localStorage.getItem('users'));//Aqui vai sobreescrever o array
-
-        }
-
-        return users;
-
-    }
-
     //Aqui irá carregar todos os dados que estão no sessionStorage para nossa página
     selectAll(){
 
-        let users = this.getUsersStorage();
+        let users = User.getUsersStorage();
 
         users.forEach(dataUser => {
 
@@ -322,6 +299,12 @@ class UserController {
         tr.querySelector(".btn-delete").addEventListener("click", e => {
         
             if (confirm('Deseja realmente excluir?')) {//Confirmação de exclusão
+
+                let user = new User();
+
+                //Para remover do localStorage
+                user.loadFromJSON(JSON.parse(tr.dataset.user));
+                user.remove();
 
                 tr.remove();//Excluir toda a linha da tr
 

@@ -78,42 +78,15 @@ class User {
     //Método para criar Id
     getNewID(){
 
-        if (!window.id) window.id = 0;
+        let usersID = parseInt(localStorage.getItem('usersID'));//colocamos o parseInt para não ser salvo como string
 
-        id++;
+        if (!usersID) usersID = 0;
 
-        return this.id;
+        usersID++;
 
-    }
+        localStorage.setItem('usersID', usersID);//Guarda o Id no localStorage
 
-    save (){
-
-        let users =User.getUsersStorage();
-
-        if (this.id > 0) {//Aqui está editando o usuário
-
-            users.map(u => {
-
-                if (u._id === this.id) {
-
-                    u = this;
-
-                }
-
-                return u;
-
-            });
-
-        } else {//Aqui está criando o usuário
-
-            this._id = this.getNewID();
-
-            users.push(this);//colocando o dados no array
-
-        }
-
-        //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
-        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+        return usersID;
 
     }
 
@@ -137,6 +110,55 @@ class User {
         }
 
         return users;
+
+    }
+
+    save (){
+
+        let users = User.getUsersStorage();
+
+        if (this.id > 0) {//Aqui está editando o usuário
+
+            users.map(u => {
+
+                if (u._id == this.id) {
+
+                    Object.assign(u, this);//Mesclar os dois objetos JSON 
+
+                }
+
+                return u;
+
+            });
+
+        } else {//Aqui está criando o usuário
+
+            this._id = this.getNewID();
+
+            users.push(this);//colocando o dados no array
+
+        }
+
+        //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
+        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+
+    }
+
+    remove(){
+
+        let users = User.getUsersStorage();
+
+        users.forEach((userData, index) => {
+            if (this._id == userData._id) {
+                //console.log(userData, index)
+                users.splice(index, 1)
+            }
+        });
+        //console.log(users);
+
+        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+
+
 
     }
 
