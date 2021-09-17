@@ -8,6 +8,7 @@ class UserController {
 
         this.onSubmit();
         this.onEdit();
+        this.selectAll();
 
     }
 
@@ -111,6 +112,9 @@ class UserController {
 
                     //Tratamento para a foto
                     values.photo = content;
+
+                    //Inserir no sessionStorage
+                    this.insert(values);
 
                     this.addLine(values);
 
@@ -234,6 +238,55 @@ class UserController {
 
     }
 
+    //Método de carregar os dados que estão dentro do sessionStorage
+    getUsersStorage(){
+
+        let users = [];//Criando array
+        
+        //Para sessionStorage
+        /*if (sessionStorage.getItem('users')){//verifica se tem alguma coisa no array
+
+            users = JSON.parse(sessionStorage.getItem('users'));//Aqui vai sobreescrever o array
+
+        }*/
+
+        //Para localStorage
+        if (localStorage.getItem('users')){//verifica se tem alguma coisa no array
+
+            users = JSON.parse(localStorage.getItem('users'));//Aqui vai sobreescrever o array
+
+        }
+
+        return users;
+
+    }
+
+    //Aqui irá carregar todos os dados que estão no sessionStorage para nossa página
+    selectAll(){
+
+        let users = this.getUsersStorage();
+
+        users.forEach(dataUser => {
+
+            //Precisou fazer isso porque precisa carregar a partir de um JSON
+            let user = new User();
+            user.loadFromJSON(dataUser);
+            this.addLine(user);//Adiciona linha a cada usuário
+        })
+
+    }
+
+    insert(data){
+
+        let users = this.getUsersStorage();
+
+        users.push(data);//colocando o dados no array
+
+        //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
+        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+
+    }
+
     addLine(dataUser){
 
         //console.log('adddLine', dataUser);
@@ -250,7 +303,7 @@ class UserController {
                 <td>${Utils.dateFormat(dataUser.register)}</td>
                 <td>
                     <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                    <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                    <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
                 </td>
             </tr>
         
@@ -265,6 +318,18 @@ class UserController {
     }
 
     addEventsTr(tr){
+
+        tr.querySelector(".btn-delete").addEventListener("click", e => {
+        
+            if (confirm('Deseja realmente excluir?')) {//Confirmação de exclusão
+
+                tr.remove();//Excluir toda a linha da tr
+
+                this.updateCount();//Para atualizar o contador
+
+            }
+        
+        })
 
         tr.querySelector(".btn-edit").addEventListener("click", e => {
 
