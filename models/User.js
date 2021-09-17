@@ -2,6 +2,7 @@ class User {
 
     constructor(name, gender, birth, country, email, password, photo, admin){
 
+        this._id;
         this._name = name;
         this._gender = gender;
         this._birth = birth;
@@ -12,6 +13,10 @@ class User {
         this._admin = admin;
         this._register = new Date();
 
+    }
+
+    get id(){
+        return this._id;
     }
 
     get name(){
@@ -68,6 +73,71 @@ class User {
             }
             
         }
+    }
+
+    //Método para criar Id
+    getNewID(){
+
+        if (!window.id) window.id = 0;
+
+        id++;
+
+        return this.id;
+
+    }
+
+    save (){
+
+        let users =User.getUsersStorage();
+
+        if (this.id > 0) {//Aqui está editando o usuário
+
+            users.map(u => {
+
+                if (u._id === this.id) {
+
+                    u = this;
+
+                }
+
+                return u;
+
+            });
+
+        } else {//Aqui está criando o usuário
+
+            this._id = this.getNewID();
+
+            users.push(this);//colocando o dados no array
+
+        }
+
+        //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
+        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+
+    }
+
+    //Método de carregar os dados que estão dentro do sessionStorage
+    static getUsersStorage(){
+
+        let users = [];//Criando array
+        
+        //Para sessionStorage
+        /*if (sessionStorage.getItem('users')){//verifica se tem alguma coisa no array
+
+            users = JSON.parse(sessionStorage.getItem('users'));//Aqui vai sobreescrever o array
+
+        }*/
+
+        //Para localStorage
+        if (localStorage.getItem('users')){//verifica se tem alguma coisa no array
+
+            users = JSON.parse(localStorage.getItem('users'));//Aqui vai sobreescrever o array
+
+        }
+
+        return users;
+
     }
 
 }

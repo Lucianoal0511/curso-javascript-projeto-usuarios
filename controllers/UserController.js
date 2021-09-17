@@ -53,24 +53,12 @@ class UserController {
                         result._photo = content;
                     }
 
-                    tr.dataset.user = JSON.stringify(result);
+                    let user = new User();//Tive que instanciar por causa dos underlines nos nomes
+                    user.loadFromJSON(result)
 
-                    tr.innerHTML = `
-                        <tr>
-                            <td><img src="${result._photo}" alt="User Image" class="img-circle img-sm"></td>
-                            <td>${result._name}</td>
-                            <td>${result._email}</td>
-                            <td>${(result._admin) ? 'Sim' : 'Não'}</td>
-                            <td>${Utils.dateFormat(result._register)}</td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                            </td>
-                        </tr>
-                    
-                    `;
+                    user.save();
 
-                    this.addEventsTr(tr);
+                    this.getTr(user, tr)
 
                     this.updateCount();
 
@@ -114,7 +102,9 @@ class UserController {
                     values.photo = content;
 
                     //Inserir no sessionStorage
-                    this.insert(values);
+                    //this.insert(values);
+                    //Insert substituido por save
+                    values.save();
 
                     this.addLine(values);
 
@@ -276,7 +266,8 @@ class UserController {
 
     }
 
-    insert(data){
+    //Foi substituido pelo método save
+    /*insert(data){
 
         let users = this.getUsersStorage();
 
@@ -285,15 +276,26 @@ class UserController {
         //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
         localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
 
-    }
+    }*/
 
     addLine(dataUser){
 
         //console.log('adddLine', dataUser);
-        let tr = document.createElement("tr");
+
+        let tr = this.getTr(dataUser);//aqui se faz necessário criar uma tr
+        
+        this.tableEl.appendChild(tr);
+
+        this.updateCount();
+    
+    }
+
+    getTr(dataUser, tr = null){//Como o tr nem sempre existe ou é opcional, foi necessário colocá-lo mas como null
+
+        if (tr === null) tr = document.createElement("tr");
 
         tr.dataset.user = JSON.stringify(dataUser);
-    
+
         tr.innerHTML = `
             <tr>
                 <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
@@ -310,11 +312,9 @@ class UserController {
         `;
 
         this.addEventsTr(tr);
-    
-        this.tableEl.appendChild(tr);
 
-        this.updateCount();
-    
+        return tr;
+
     }
 
     addEventsTr(tr){
