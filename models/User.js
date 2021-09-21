@@ -113,34 +113,54 @@ class User {
 
     }
 
+    toJSON() {
+
+        let json = {};
+
+        Object.keys(this).forEach(key => {
+
+            json[key] = this[key]
+            
+        })
+
+    }
+
     save (){
 
-        let users = User.getUsersStorage();
+        if (this.id) {
 
-        if (this.id > 0) {//Aqui está editando o usuário
+            HttpRequest.put(`/users/${this.id}`, this.toJSON())
 
-            users.map(u => {
-
-                if (u._id == this.id) {
-
-                    Object.assign(u, this);//Mesclar os dois objetos JSON 
-
-                }
-
-                return u;
-
-            });
-
-        } else {//Aqui está criando o usuário
-
-            this._id = this.getNewID();
-
-            users.push(this);//colocando o dados no array
+        } else {
 
         }
 
-        //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
-        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+        // let users = User.getUsersStorage();
+
+        // if (this.id > 0) {//Aqui está editando o usuário
+
+        //     users.map(u => {
+
+        //         if (u._id == this.id) {
+
+        //             Object.assign(u, this);//Mesclar os dois objetos JSON 
+
+        //         }
+
+        //         return u;
+
+        //     });
+
+        // } else {//Aqui está criando o usuário
+
+        //     this._id = this.getNewID();
+
+        //     users.push(this);//colocando o dados no array
+
+        // }
+
+        // //sessionStorage.setItem("users", JSON.stringify(users));//Converte o json em uma string
+        // localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
 
     }
 
