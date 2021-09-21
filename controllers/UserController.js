@@ -231,15 +231,40 @@ class UserController {
     //Aqui irá carregar todos os dados que estão no sessionStorage para nossa página
     selectAll(){
 
-        let users = User.getUsersStorage();
+        //let users = User.getUsersStorage();
 
-        users.forEach(dataUser => {
+        //Criando o AJAX = JavaScript Assincrono e XML
+        let ajax = new XMLHttpRequest();
+        ajax.open('GET', '/users');
+        ajax.omload = event => {//Porque não sabemos quanto tempo irá levar para responder
 
-            //Precisou fazer isso porque precisa carregar a partir de um JSON
-            let user = new User();
-            user.loadFromJSON(dataUser);
-            this.addLine(user);//Adiciona linha a cada usuário
-        })
+            let obj = {users: []}
+
+            try {
+                obj = JSON.parse(ajax.responseText);
+            } catch(e) {
+                console.log(e);
+            }
+            
+            obj.users.forEach(dataUser => {
+
+                //Precisou fazer isso porque precisa carregar a partir de um JSON
+                let user = new User();
+                user.loadFromJSON(dataUser);
+                this.addLine(user);//Adiciona linha a cada usuário
+            })
+
+        }
+
+        ajax.send();
+
+        // users.forEach(dataUser => {
+
+        //     //Precisou fazer isso porque precisa carregar a partir de um JSON
+        //     let user = new User();
+        //     user.loadFromJSON(dataUser);
+        //     this.addLine(user);//Adiciona linha a cada usuário
+        // })
 
     }
 
