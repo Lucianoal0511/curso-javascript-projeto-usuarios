@@ -56,17 +56,19 @@ class UserController {
                     let user = new User();//Tive que instanciar por causa dos underlines nos nomes
                     user.loadFromJSON(result)
 
-                    user.save();
+                    user.save().then(user => {
 
-                    this.getTr(user, tr)
+                        this.getTr(user, tr)
 
-                    this.updateCount();
+                        this.updateCount();
 
-                    this.formUpdateEl.reset();//Limpa o formulário de edição
+                        this.formUpdateEl.reset();//Limpa o formulário de edição
 
-                    btn.disabled = false;//Aqui habilita novamente o botão salvar após enviado o formuário
+                        btn.disabled = false;//Aqui habilita novamente o botão salvar após enviado o formuário
 
-                    this.showPanelCreate();//Remete o usuário ao painel de inclusão
+                        this.showPanelCreate();//Remete o usuário ao painel de inclusão
+
+                    });
 
                 },
                 function(e){
@@ -104,13 +106,15 @@ class UserController {
                     //Inserir no sessionStorage
                     //this.insert(values);
                     //Insert substituido por save
-                    values.save();
+                    values.save().then(user => {
 
-                    this.addLine(values);
+                        this.addLine(values);
 
-                    this.formEl.reset();//Aqui vai limpar o formulário
+                        this.formEl.reset();//Aqui vai limpar o formulário
 
-                    btn.disabled = false;//Aqui habilita novamente o botão salvar após enviado o formuário
+                        btn.disabled = false;//Aqui habilita novamente o botão salvar após enviado o formuário
+
+                    });
 
                 },
                 function(e){
@@ -235,7 +239,19 @@ class UserController {
 
         //Criando o AJAX = JavaScript Assincrono e XML
 
-        HttpRequest.get('/users').then(data => {
+        // HttpRequest.get('/users').then(data => {
+
+        //     data.users.forEach(dataUser => {
+
+        //         //Precisou fazer isso porque precisa carregar a partir de um JSON
+        //         let user = new User();
+        //         user.loadFromJSON(dataUser);
+        //         this.addLine(user);//Adiciona linha a cada usuário
+        //     })
+
+        // })
+
+        User.getUsersStorage().then(data => {
 
             data.users.forEach(dataUser => {
 
@@ -342,11 +358,16 @@ class UserController {
 
                 //Para remover do localStorage
                 user.loadFromJSON(JSON.parse(tr.dataset.user));
-                user.remove();
 
-                tr.remove();//Excluir toda a linha da tr
+                user.remove().then(data => {
 
-                this.updateCount();//Para atualizar o contador
+                    tr.remove();//Excluir toda a linha da tr
+
+                    this.updateCount();//Para atualizar o contador
+
+                });
+
+                
 
             }
         

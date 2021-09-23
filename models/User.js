@@ -69,31 +69,31 @@ class User {
                     break;
 
                 default:
-                    this[name] = json[name];
+                    if (name.substring(0, 1) === '_') this[name] = json[name];
             }
             
         }
     }
 
-    //Método para criar Id
-    getNewID(){
+    //Método para criar Id no localStorage
+    // getNewID(){
 
-        let usersID = parseInt(localStorage.getItem('usersID'));//colocamos o parseInt para não ser salvo como string
+    //     let usersID = parseInt(localStorage.getItem('usersID'));//colocamos o parseInt para não ser salvo como string
 
-        if (!usersID) usersID = 0;
+    //     if (!usersID) usersID = 0;
 
-        usersID++;
+    //     usersID++;
 
-        localStorage.setItem('usersID', usersID);//Guarda o Id no localStorage
+    //     localStorage.setItem('usersID', usersID);//Guarda o Id no localStorage
 
-        return usersID;
+    //     return usersID;
 
-    }
+    // }
 
     //Método de carregar os dados que estão dentro do sessionStorage
     static getUsersStorage(){
 
-        let users = [];//Criando array
+        // let users = [];//Criando array
         
         //Para sessionStorage
         /*if (sessionStorage.getItem('users')){//verifica se tem alguma coisa no array
@@ -103,13 +103,16 @@ class User {
         }*/
 
         //Para localStorage
-        if (localStorage.getItem('users')){//verifica se tem alguma coisa no array
+        // if (localStorage.getItem('users')){//verifica se tem alguma coisa no array
 
-            users = JSON.parse(localStorage.getItem('users'));//Aqui vai sobreescrever o array
+        //     users = JSON.parse(localStorage.getItem('users'));//Aqui vai sobreescrever o array
 
-        }
+        // }
 
-        return users;
+        // return users;
+
+        //return HttpRequest.get('/users');
+        return Fetch.get('/users');
 
     }
 
@@ -119,21 +122,43 @@ class User {
 
         Object.keys(this).forEach(key => {
 
-            json[key] = this[key]
-            
+            if (this[key] !== undefined) json[key] = this[key]
+
         })
+
+        return json
 
     }
 
     save (){
 
-        if (this.id) {
+        new Promise((resolve, reject) => {
 
-            HttpRequest.put(`/users/${this.id}`, this.toJSON())
+            let promise
 
-        } else {
+            if (this.id) {
 
-        }
+                HttpRequest.put(`/users/${this.id}`, this.toJSON())
+
+            } else {
+
+                HttpRequest.post(`/users`, this.toJSON())
+
+            }
+
+            promise.then(data => {
+
+                this.loadFromJSON(data)
+                resolve(this)
+
+            }).catch(e => {
+
+                reject(e)
+
+            })
+        })
+
+        
 
         // let users = User.getUsersStorage();
 
@@ -166,19 +191,21 @@ class User {
 
     remove(){
 
-        let users = User.getUsersStorage();
+        // let users = User.getUsersStorage();
 
-        users.forEach((userData, index) => {
-            if (this._id == userData._id) {
-                //console.log(userData, index)
-                users.splice(index, 1)
-            }
-        });
+        // users.forEach((userData, index) => {
+        //     if (this._id == userData._id) {
+        //         //console.log(userData, index)
+        //         users.splice(index, 1)
+        //     }
+        // });
         //console.log(users);
 
-        localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
+        // localStorage.setItem("users", JSON.stringify(users));//Para salvar no localStorage
 
 
+        //Usando o banco de dados do servidor
+        return HttpRequest.delete(`/users/${this.id}`)
 
     }
 
